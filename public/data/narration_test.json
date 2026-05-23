@@ -1,0 +1,62 @@
+{
+  "totalDuration": 55,
+  "segments": [
+    {
+      "type": "narration",
+      "start": 0.0,
+      "end": 6.5,
+      "text": "In 1897 vertrok de Belgica vanuit Antwerpen\nnaar het onbekende zuiden."
+    },
+    {
+      "type": "atmosphere",
+      "start": 6.5,
+      "end": 9.0
+    },
+    {
+      "type": "narration",
+      "start": 9.0,
+      "end": 16.0,
+      "text": "Aan boord bevonden zich wetenschappers en zeelieden\nuit zes verschillende landen."
+    },
+    {
+      "type": "narration",
+      "start": 16.0,
+      "end": 24.0,
+      "text": "Wat begon als een expeditie van ontdekking,\nwerd een strijd om te overleven."
+    },
+    {
+      "type": "atmosphere",
+      "start": 24.0,
+      "end": 27.0
+    },
+    {
+      "type": "narration",
+      "start": 27.0,
+      "end": 35.0,
+      "text": "Dertien maanden lang zat het schip vast in het ijs.\nDe bemanning staarde in de eindeloze duisternis."
+    },
+    {
+      "type": "narration",
+      "start": 35.0,
+      "end": 43.0,
+      "text": "Ze stelden zichzelf vragen —\nover moed, over angst, over wat het betekent\nom door te gaan als alles verloren lijkt."
+    },
+    {
+      "type": "atmosphere",
+      "start": 43.0,
+      "end": 46.0
+    },
+    {
+      "type": "narration",
+      "start": 46.0,
+      "end": 51.0,
+      "text": "Dezelfde vragen wachten nu op jou."
+    },
+    {
+      "type": "narration",
+      "start": 51.0,
+      "end": 55.0,
+      "text": "Welke ga je beantwoorden?"
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+/* ============================================================
+   Base Styles — Belgische Poolexpedities
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+  color: var(--color-text-default);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbars everywhere */
+::-webkit-scrollbar { display: none; }
+html { scrollbar-width: none; }
+
+#app {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* ---- Scene Container ---- */
+.scene-container {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-canvas);
+}
+
+.scene-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Loader ---- */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-primary);
+  transition: opacity 500ms ease;
+}
+
+.loader__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-lantaarn);
+  animation: loader-pulse 800ms ease-in-out infinite;
+}
+
+@keyframes loader-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.2); }
+}
+
+/* ---- Caption Overlay ---- */
+.caption {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  z-index: var(--z-caption);
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease;
+}
+
+/* ---- Subtitle Overlay ---- */
+.subtitle {
+  position: fixed;
+  bottom: 140px;
+  left: 0;
+  right: 0;
+  z-index: var(--z-subtitle);
+  text-align: center;
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  color: var(--color-text-spotlight);
+  line-height: var(--lh-snug);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  white-space: pre-line;
+  background: transparent;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+/* ---- Pause Overlay ---- */
+.pause-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-pause-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-overlay);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.pause-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.pause-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 240px;
+  min-height: var(--touch-comfortable);
+  padding: 18px 36px;
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: filter 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pause-btn:hover,
+.pause-btn:focus-visible {
+  filter: brightness(1.1);
+}
+
+.pause-btn--primary {
+  background: var(--color-lantaarn);
+  color: var(--color-bg-primary);
+}
+
+.pause-btn--secondary {
+  background: transparent;
+  border: 1px solid var(--color-divider);
+  color: var(--color-text-default);
+}
+
+/* ---- White Flash ---- */
+.white-flash {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-white-flash);
+  background: #FFFFFF;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- Pause Hint ---- */
+.pause-hint {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  z-index: var(--z-pause-hint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  pointer-events: none;
+}
+
+.pause-hint__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-lantaarn);
+  animation: hint-pulse 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes hint-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+
+.pause-hint__text {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-lantaarn);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}

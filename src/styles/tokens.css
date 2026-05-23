@@ -1,0 +1,108 @@
+/* ============================================================
+   Design Tokens — Belgische Poolexpedities
+   ============================================================ */
+
+/* ---- GT Sectra Fine (display / body serif) ---- */
+@font-face {
+  font-family: 'GT Sectra Fine';
+  src: url('/fonts/GT-Sectra-Fine-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Sectra Fine';
+  src: url('/fonts/GT-Sectra-Fine-Regular-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Sectra Fine';
+  src: url('/fonts/GT-Sectra-Fine-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Sectra Fine';
+  src: url('/fonts/GT-Sectra-Fine-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Sectra Fine';
+  src: url('/fonts/GT-Sectra-Fine-Book.ttf') format('truetype');
+  font-weight: 350;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Inter (UI sans-serif) ---- */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ---- Palette ---- */
+  --color-lantaarn:       #CC7E33;
+  --color-bg-primary:     #161D27;
+  --color-bg-overlay:     rgba(15, 23, 33, 0.92);
+  --color-text-default:   #E8E6E1;
+  --color-text-muted:     rgba(232, 230, 225, 0.55);
+  --color-text-spotlight: #FFFFFF;
+  --color-divider:        rgba(232, 230, 225, 0.18);
+
+  /* ---- Typography ---- */
+  --font-display: 'GT Sectra Fine', Georgia, serif;
+  --font-text:    'GT Sectra Fine', Georgia, serif;
+  --font-ui:      'Inter', system-ui, -apple-system, sans-serif;
+
+  --fs-caption: 0.75rem;
+  --fs-body:    1.125rem;
+  --fs-h3:      1.25rem;
+  --fs-h2:      1.5rem;
+  --fs-h1:      2rem;
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-bold:    700;
+
+  --lh-snug:   1.45;
+  --lh-normal: 1.6;
+
+  --tracking-display: 0.22em;
+  --tracking-wide:    0.12em;
+
+  /* ---- Touch / Spacing ---- */
+  --touch-comfortable: 120px;
+
+  /* ---- Easing ---- */
+  --ease-atmospheric: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+
+  /* ---- Z-index layers ---- */
+  --z-canvas:        1;
+  --z-subtitle:      10;
+  --z-caption:       11;
+  --z-pause-hint:    15;
+  --z-loader:        50;
+  --z-pause-overlay: 100;
+  --z-white-flash:   200;
+}

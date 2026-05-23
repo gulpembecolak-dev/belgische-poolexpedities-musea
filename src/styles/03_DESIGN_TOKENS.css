@@ -1,0 +1,183 @@
+/* ========================================
+   03_DESIGN_TOKENS.css
+   Belgische Poolexpedities — Master visual system
+   
+   Bu dosya tüm projenin görsel sisteminin tek kaynağıdır.
+   Test'te kullanıyoruz, full project'te aynısını kullanmaya
+   devam edeceğiz. Yeni token ekledikçe burası genişler.
+   
+   src/styles/tokens.css olarak kopyala.
+   ======================================== */
+
+:root {
+  /* ============== KLEURPALETTE ============== */
+  
+  /* Achtergrond — donker base */
+  --color-bg-deepest: #0F1721;        /* Map void, en derin alan */
+  --color-bg-primary: #161D27;        /* Standard background */
+  --color-bg-elevated: #1F2A37;       /* Land mass, cards, raised surfaces */
+  --color-bg-overlay: rgba(15, 23, 33, 0.92);  /* Pause overlay */
+  
+  /* Tekst hiyerarşisi */
+  --color-text-spotlight: #F4EFE6;    /* Primary bright — vurgu metinleri */
+  --color-text-default: #E8DECC;      /* Default body */
+  --color-text-secondary: #C5BDA8;    /* Secondary detail */
+  --color-text-muted: #8A8273;        /* Tertiary, captions */
+  --color-text-dim: #4A4439;          /* Disabled, very subtle */
+  
+  /* Lantaarn — sistem aksanı */
+  --color-lantaarn: #CC7E33;          /* Warm orange, primary accent */
+  --color-lantaarn-bright: #E89344;   /* Dark mode bright variant */
+  --color-lantaarn-glow: rgba(204, 126, 51, 0.35);  /* Soft halo */
+  
+  /* Functional */
+  --color-divider: #4A4439;           /* Separators */
+  --color-stroke-land: rgba(232, 222, 204, 0.55); /* Map land stroke */
+  
+  /* ============== TYPOGRAFIE ============== */
+  
+  /* Font families */
+  --font-display: 'GT Sectra', 'Spectral', Georgia, serif;
+  --font-text: 'GT Sectra', 'Spectral', Georgia, serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Font sizes — 5120×1440 cabin baseline; mobile/laptop scale via clamp */
+  --fs-hero: clamp(48px, 4.5vw, 96px);        /* Opening title */
+  --fs-h1: clamp(36px, 3.5vw, 72px);          /* Expedition name */
+  --fs-h2: clamp(28px, 2.5vw, 52px);          /* Section heading */
+  --fs-h3: clamp(22px, 2vw, 38px);            /* Subheading */
+  --fs-body: clamp(18px, 1.4vw, 28px);        /* Body text + subtitle */
+  --fs-caption: clamp(14px, 1.1vw, 20px);     /* Captions, credits */
+  --fs-data: clamp(40px, 5vw, 96px);          /* Large data numbers */
+  
+  /* Font weights */
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+  
+  /* Line heights */
+  --lh-tight: 1.1;
+  --lh-snug: 1.3;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.7;
+  
+  /* Letter spacing */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-display: 0.12em;  /* Yıl numaraları, başlıklar */
+  
+  /* ============== SPACING ============== */
+  
+  /* 8px base scale */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-12: 96px;
+  --space-16: 128px;
+  
+  /* Layout */
+  --safe-margin: 120px;          /* Curved edge safe area */
+  --triptych-zone-width: 1707px; /* Each of 3 zones in 5120 */
+  
+  /* ============== TOUCH TARGETS ============== */
+  
+  --touch-min: 88px;             /* Minimum touch target (Fitts's Law 2x) */
+  --touch-comfortable: 120px;    /* Comfortable target for primary actions */
+  
+  /* ============== MOTION ============== */
+  
+  /* Durations */
+  --duration-instant: 100ms;
+  --duration-quick: 200ms;
+  --duration-standard: 400ms;
+  --duration-slow: 800ms;
+  --duration-atmospheric: 2000ms;
+  --duration-transition: 3000ms;  /* Scene transitions, B&W → color */
+  
+  /* Easings */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-atmospheric: cubic-bezier(0.4, 0, 0.2, 1);  /* Smooth, contemplative */
+  
+  /* ============== ELEVATIONS / SHADOWS ============== */
+  
+  --glow-lantaarn: 0 0 40px var(--color-lantaarn-glow);
+  --shadow-overlay: 0 0 80px rgba(0, 0, 0, 0.6);
+  
+  /* ============== Z-INDEX SCALE ============== */
+  
+  --z-scene: 1;
+  --z-subtitle: 50;
+  --z-extras-panel: 80;
+  --z-pause-overlay: 100;
+  --z-debug: 9999;
+}
+
+/* ============== FONT FACE DECLARATIONS ============== */
+
+@font-face {
+  font-family: 'GT Sectra';
+  src: url('/fonts/GT-Sectra-Display.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Sectra';
+  src: url('/fonts/GT-Sectra-Text-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+/* ============== BASE RESET ============== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+  color: var(--color-text-default);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Utility — for elements that should fade in/out atmospherically */
+.atmospheric-fade {
+  transition: opacity var(--duration-atmospheric) var(--ease-atmospheric);
+}
