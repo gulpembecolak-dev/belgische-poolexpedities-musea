@@ -1,61 +1,92 @@
 {
-  "totalDuration": 55,
+  "id": "intro_belgica_nl",
+  "audioFile": "/audio/intro_narration_nl.mp3",
+  "language": "nl-BE",
+  "voiceActor": "Gül Pembe Çolak",
+  "totalDuration": 35.0,
   "segments": [
     {
-      "type": "narration",
+      "id": "intro_silence",
+      "type": "atmospheric",
       "start": 0.0,
-      "end": 6.5,
-      "text": "In 1897 vertrok de Belgica vanuit Antwerpen\nnaar het onbekende zuiden."
+      "end": 1.5,
+      "description": "Wind. IJs kraakt. Het schip verschijnt in het ijs."
     },
     {
-      "type": "atmosphere",
-      "start": 6.5,
-      "end": 9.0
+      "id": "block_1_ships",
+      "type": "narration",
+      "start": 1.5,
+      "end": 7.0,
+      "text": "Sommige schepen vertrekken.\nSommige verdwijnen in de geschiedenis.\nSommige doen beide."
     },
     {
+      "id": "pause_wind",
+      "type": "atmospheric",
+      "start": 7.0,
+      "end": 9.0,
+      "description": "Lange pauze. Alleen wind."
+    },
+    {
+      "id": "block_2_three",
       "type": "narration",
       "start": 9.0,
-      "end": 16.0,
-      "text": "Aan boord bevonden zich wetenschappers en zeelieden\nuit zes verschillende landen."
+      "end": 14.5,
+      "text": "Sindsdien zijn er drie vertrokken.\nHonderd jaar uit elkaar.\nNaar hetzelfde wit."
     },
     {
+      "id": "transition_mast",
+      "type": "atmospheric",
+      "start": 14.5,
+      "end": 15.5,
+      "description": "Camera onder de mast door."
+    },
+    {
+      "id": "block_3_motives",
       "type": "narration",
-      "start": 16.0,
-      "end": 24.0,
-      "text": "Wat begon als een expeditie van ontdekking,\nwerd een strijd om te overleven."
+      "start": 15.5,
+      "end": 22.0,
+      "text": "De een ging om te overleven.\nDe ander om een spoor achter te laten.\nDe derde om de wind te volgen."
     },
     {
-      "type": "atmosphere",
-      "start": 24.0,
-      "end": 27.0
+      "id": "transition_door",
+      "type": "atmospheric",
+      "start": 22.0,
+      "end": 23.5,
+      "description": "Houten deur. Een hand. Een aarzeling."
     },
     {
+      "id": "block_4_call",
       "type": "narration",
-      "start": 27.0,
+      "start": 23.5,
+      "end": 27.5,
+      "text": "Ze hoorden allemaal dezelfde roep —\nde roep van het zesde continent."
+    },
+    {
+      "id": "transition_door_opens",
+      "type": "atmospheric",
+      "start": 27.5,
+      "end": 28.5,
+      "description": "Deur opent. We zijn in de cabine."
+    },
+    {
+      "id": "block_5_now",
+      "type": "narration",
+      "start": 28.5,
+      "end": 30.5,
+      "text": "Nu hoor jij hem ook."
+    },
+    {
+      "id": "final_silence",
+      "type": "atmospheric",
+      "start": 30.5,
+      "end": 32.5,
+      "description": "Stilte. Drie kapiteinskaarten verschijnen langzaam."
+    },
+    {
+      "id": "block_6_invitation",
+      "type": "narration",
+      "start": 32.5,
       "end": 35.0,
-      "text": "Dertien maanden lang zat het schip vast in het ijs.\nDe bemanning staarde in de eindeloze duisternis."
-    },
-    {
-      "type": "narration",
-      "start": 35.0,
-      "end": 43.0,
-      "text": "Ze stelden zichzelf vragen —\nover moed, over angst, over wat het betekent\nom door te gaan als alles verloren lijkt."
-    },
-    {
-      "type": "atmosphere",
-      "start": 43.0,
-      "end": 46.0
-    },
-    {
-      "type": "narration",
-      "start": 46.0,
-      "end": 51.0,
-      "text": "Dezelfde vragen wachten nu op jou."
-    },
-    {
-      "type": "narration",
-      "start": 51.0,
-      "end": 55.0,
       "text": "Welke ga je beantwoorden?"
     }
   ]

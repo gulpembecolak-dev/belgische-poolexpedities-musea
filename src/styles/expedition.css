@@ -1,0 +1,390 @@
+/* ============================================================
+   expedition.css — expedition view layout + components
+   ============================================================ */
+
+.expedition {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-scene);
+  background: var(--color-bg-primary);
+  color: var(--color-text-default);
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-atmospheric);
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.expedition--visible {
+  opacity: 1;
+}
+
+/* Custom scrollbar (subtle) */
+.expedition::-webkit-scrollbar {
+  width: 4px;
+}
+.expedition::-webkit-scrollbar-track {
+  background: transparent;
+}
+.expedition::-webkit-scrollbar-thumb {
+  background: var(--color-divider);
+  border-radius: 2px;
+}
+
+/* ---- Hero ---- */
+.exp__hero {
+  position: relative;
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-8) var(--safe-margin) var(--space-8);
+  overflow: hidden;
+}
+
+.exp__hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-deepest) 0%,
+    var(--color-bg-primary) 70%,
+    transparent 100%
+  );
+  opacity: 0.8;
+}
+
+.exp__hero-content {
+  position: relative;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.exp__hero-year {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  color: var(--exp-accent, var(--color-lantaarn));
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+.exp__hero-ship {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.exp__hero-captain {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  font-weight: var(--fw-bold);
+  color: var(--color-text-spotlight);
+  line-height: var(--lh-tight);
+  margin: var(--space-2) 0;
+}
+
+.exp__hero-motto {
+  font-family: var(--font-text);
+  font-size: var(--fs-h2);
+  color: var(--color-text-secondary);
+  font-weight: var(--fw-regular);
+}
+
+/* ---- Intro ---- */
+.exp__intro {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--safe-margin);
+}
+
+.exp__intro-text {
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-relaxed);
+  color: var(--color-text-secondary);
+}
+
+/* ---- Section title ---- */
+.exp__section-title {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+/* ---- Four-number poster ---- */
+.exp__poster {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-8) var(--safe-margin);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.poster-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-4) var(--space-2);
+  border: 1px solid var(--color-divider);
+  border-radius: 8px;
+  background: var(--color-bg-elevated);
+}
+
+.poster-tile__number {
+  font-family: var(--font-display);
+  font-size: var(--fs-data);
+  font-weight: var(--fw-bold);
+  color: var(--exp-accent, var(--color-lantaarn));
+  line-height: 1;
+}
+
+.poster-tile__label {
+  font-family: var(--font-ui);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-default);
+  margin-top: var(--space-1);
+}
+
+.poster-tile__detail {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* ---- Moments timeline (horizontal scroll) ---- */
+.exp__moments {
+  padding: var(--space-8) 0 var(--space-8) var(--safe-margin);
+}
+
+.exp__moments .exp__section-title {
+  padding-right: var(--safe-margin);
+}
+
+.exp__moments-strip {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-3);
+  padding-right: var(--safe-margin);
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.exp__moments-strip::-webkit-scrollbar {
+  height: 3px;
+}
+.exp__moments-strip::-webkit-scrollbar-track {
+  background: transparent;
+}
+.exp__moments-strip::-webkit-scrollbar-thumb {
+  background: var(--color-divider);
+  border-radius: 2px;
+}
+
+/* ---- Moment card ---- */
+.moment-card {
+  flex-shrink: 0;
+  width: clamp(260px, 18vw, 340px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0;
+  border: none;
+  background: var(--color-bg-elevated);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform var(--duration-quick) var(--ease-atmospheric),
+              box-shadow var(--duration-quick) var(--ease-atmospheric);
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  appearance: none;
+  min-height: var(--touch-min);
+}
+
+.moment-card:active {
+  transform: scale(0.97);
+}
+
+.moment-card:hover,
+.moment-card:active {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.moment-card__thumb {
+  width: 100%;
+  height: clamp(140px, 10vw, 200px);
+  background: var(--color-bg-deepest);
+  position: relative;
+  overflow: hidden;
+}
+
+.moment-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.3);
+  transition: filter var(--duration-standard) ease;
+}
+
+.moment-card:hover .moment-card__img,
+.moment-card:active .moment-card__img {
+  filter: grayscale(0);
+}
+
+.moment-card__fallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-deepest) 100%);
+}
+
+.moment-card__date {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--exp-accent, var(--color-lantaarn));
+  letter-spacing: var(--tracking-wide);
+  padding: var(--space-2) var(--space-2) 0;
+}
+
+.moment-card__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-default);
+  line-height: var(--lh-snug);
+  padding: 0 var(--space-2);
+}
+
+.moment-card__place {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  padding: 0 var(--space-2) var(--space-2);
+}
+
+/* ---- Key figures ---- */
+.exp__figures {
+  padding: var(--space-8) var(--safe-margin);
+}
+
+.exp__figures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+.figure-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-divider);
+  border-radius: 8px;
+  background: var(--color-bg-elevated);
+}
+
+.figure-card__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-spotlight);
+}
+
+.figure-card__role {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--exp-accent, var(--color-lantaarn));
+  letter-spacing: var(--tracking-wide);
+}
+
+.figure-card__detail {
+  font-family: var(--font-text);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  line-height: var(--lh-normal);
+  margin-top: var(--space-1);
+}
+
+/* ---- Map ---- */
+.exp__map {
+  padding: var(--space-8) var(--safe-margin) var(--space-16);
+}
+
+.exp__map-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--color-bg-deepest);
+  border: 1px solid var(--color-divider);
+  border-radius: 8px;
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+.expedition__map-svg {
+  width: 100%;
+  height: auto;
+}
+
+.expedition__map-svg .map-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  fill: var(--color-text-muted);
+  letter-spacing: 0.04em;
+}
+
+/* Route dash animation */
+.route-animated {
+  stroke-dashoffset: 0;
+  animation: route-dash 8s linear infinite;
+}
+
+@keyframes route-dash {
+  to { stroke-dashoffset: -40; }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  .exp__poster {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .exp__hero {
+    padding: var(--space-6) var(--space-4) var(--space-6);
+  }
+  .exp__intro,
+  .exp__figures,
+  .exp__map,
+  .exp__moments {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-animated {
+    animation: none !important;
+  }
+  .moment-card,
+  .poster-tile__number {
+    transition-duration: 0ms !important;
+  }
+}

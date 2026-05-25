@@ -1,38 +1,39 @@
-// "Tik om verder te gaan" hint element
-
 /**
- * Create the post-scene pause-hint controller.
- * @returns {{ mount, show, hide, destroy }}
+ * pause-hint.js — pulsing dot + "Tik om verder te gaan".
  */
 export function createPauseHint() {
-  /** @type {HTMLDivElement|null} */
-  let el = null;
+  let root = null;
 
   return {
     mount(container) {
-      el = document.createElement('div');
-      el.id = 'pause-hint';
-      el.className = 'pause-hint';
+      if (root) return;
+      root = document.createElement('div');
+      root.className = 'pause-hint';
 
-      el.innerHTML = `
-        <span class="pause-hint__dot"></span>
-        <span class="pause-hint__text">Tik om verder te gaan</span>
-      `;
+      const dot = document.createElement('span');
+      dot.className = 'pause-hint__dot';
 
-      container.appendChild(el);
+      const label = document.createElement('span');
+      label.textContent = 'Tik om verder te gaan';
+
+      root.appendChild(dot);
+      root.appendChild(label);
+      container.appendChild(root);
     },
 
     show() {
-      if (el) el.style.opacity = '1';
+      if (!root) return;
+      root.classList.add('pause-hint--visible');
     },
 
     hide() {
-      if (el) el.style.opacity = '0';
+      if (!root) return;
+      root.classList.remove('pause-hint--visible');
     },
 
     destroy() {
-      if (el?.parentNode) el.parentNode.removeChild(el);
-      el = null;
+      if (root && root.parentNode) root.parentNode.removeChild(root);
+      root = null;
     },
   };
 }

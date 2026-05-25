@@ -1,89 +1,80 @@
-// Procedural ice-rock mesh factory
-
-import {
-  Group,
-  IcosahedronGeometry,
-  MeshStandardMaterial,
-  Mesh,
-  RepeatWrapping,
-} from 'three';
-
 /**
- * Create a group of irregularly-shaped ice rocks arranged in a
- * partial ring around the origin, avoiding the camera approach angle.
- *
- * @param {object}  opts
- * @param {number}  opts.count            Number of rocks (default 7)
- * @param {import('three').Texture} opts.iceTexture  Loaded ice surface texture
- * @param {number[]} opts.avoidAngleRange  [minDeg, maxDeg] to skip (default [-30, 30])
- * @returns {Group}
+ * ice-rocks.js — procedural ice/rock cluster ringing the ship.
+ * Avoids the camera approach corridor.
  */
-export function createIceRocks({
-  count = 7,
-  iceTexture,
-  avoidAngleRange = [-30, 30],
-} = {}) {
-  const group = new Group();
+import * as THREE from 'three';
+
+const CAMERA_AZIMUTH = Math.atan2(32, 15);
+const CAMERA_HALF_CONE = Math.PI / 6;
+
+function rand(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function isInForbiddenCone(angle) {
+  let d = angle - CAMERA_AZIMUTH;
+  while (d >  Math.PI) d -= 2 * Math.PI;
+  while (d < -Math.PI) d += 2 * Math.PI;
+  return Math.abs(d) < CAMERA_HALF_CONE;
+}
+
+function perturbGeometry(geo, amount = 0.15) {
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    const z = pos.getZ(i);
+    const factor = 1 + (Math.random() * 2 - 1) * amount;
+    pos.setXYZ(i, x * factor, y * factor, z * factor);
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+}
+
+export function createIceRocks({ count = 7, iceTexture } = {}) {
+  const group = new THREE.Group();
   group.name = 'ice-rocks';
 
-  // Camera is roughly at (18, 3.5, 38) → its angle from +Z:
-  const cameraAngle = Math.atan2(18, 38); // ≈ 0.44 rad ≈ 25°
-  const avoidHalf =
-    ((avoidAngleRange[1] - avoidAngleRange[0]) / 2) * (Math.PI / 180);
+  let placed = 0;
+  let safety = 0;
+  while (placed < count && safety < 200) {
+    safety++;
+    const angle = rand(0, Math.PI * 2);
+    if (isInForbiddenCone(angle)) continue;
 
-  for (let i = 0; i < count; i++) {
-    // Random radius between 1.5 and 4.0
-    const geoRadius = 1.5 + Math.random() * 2.5;
-    const geometry = new IcosahedronGeometry(geoRadius, 1);
+    const radius = rand(12, 28);
+    const rockRadius = rand(1.5, 4);
 
-    // Perturb vertices ±15 % along their direction for irregular shapes
-    const pos = geometry.attributes.position;
-    for (let j = 0; j < pos.count; j++) {
-      const factor = 1 + (Math.random() - 0.5) * 0.3;
-      pos.setXYZ(
-        j,
-        pos.getX(j) * factor,
-        pos.getY(j) * factor,
-        pos.getZ(j) * factor
-      );
+    const geo = new THREE.IcosahedronGeometry(rockRadius, 1);
+    perturbGeometry(geo, 0.15);
+
+    const tex = iceTexture ? iceTexture.clone() : null;
+    if (tex) {
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(1.5, 1.5);
+      tex.needsUpdate = true;
     }
-    pos.needsUpdate = true;
-    geometry.computeVertexNormals();
 
-    // Clone texture so each rock can have its own repeat
-    const tex = iceTexture.clone();
-    tex.wrapS = RepeatWrapping;
-    tex.wrapT = RepeatWrapping;
-    tex.repeat.set(1.5, 1.5);
-    tex.needsUpdate = true;
-
-    const material = new MeshStandardMaterial({
+    const mat = new THREE.MeshStandardMaterial({
       map: tex,
+      color: 0xe8eef5,
       roughness: 0.65,
       metalness: 0.05,
-      color: 0xe8eef5,
     });
 
-    const mesh = new Mesh(geometry, material);
-
-    // Distribute in a partial circle, skip the camera approach cone
-    let angle;
-    do {
-      angle = Math.random() * Math.PI * 2;
-    } while (Math.abs(angle - cameraAngle) < avoidHalf);
-
-    const dist = 12 + Math.random() * 16; // [12, 28]
-    mesh.position.set(
-      Math.sin(angle) * dist,
-      Math.random() * 1.2,
-      Math.cos(angle) * dist
-    );
-
-    mesh.rotation.y = Math.random() * Math.PI * 2;
+    const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
+    mesh.position.set(
+      Math.cos(angle) * radius,
+      rand(0, 1.2),
+      Math.sin(angle) * radius,
+    );
+    mesh.rotation.y = rand(0, Math.PI * 2);
 
     group.add(mesh);
+    placed++;
   }
 
   return group;

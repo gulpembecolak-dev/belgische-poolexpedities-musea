@@ -1,72 +1,66 @@
-// Pause overlay — resume / close controls
-
 /**
- * Create the pause-overlay controller.
- * @returns {{ mount, show, hide, isVisible, destroy }}
+ * pause-overlay.js — full-viewport pause overlay with Hervatten/Sluiten.
  */
 export function createPauseOverlay() {
-  /** @type {HTMLDivElement|null} */
-  let el = null;
-  let visible = false;
+  let root = null;
+  let resumeBtn = null;
+  let closeBtn = null;
+  let onResume = null;
+  let onClose = null;
 
   return {
-    /**
-     * Mount the overlay into `container`.
-     * @param {HTMLElement} container
-     * @param {{ onResume: Function, onClose: Function }} callbacks
-     */
-    mount(container, { onResume, onClose }) {
-      el = document.createElement('div');
-      el.id = 'pause-overlay';
-      el.className = 'pause-overlay';
-      el.style.display = 'none';
+    mount(container, handlers = {}) {
+      if (root) return;
+      onResume = handlers.onResume;
+      onClose = handlers.onClose;
 
-      el.innerHTML = `
-        <div class="pause-overlay__content">
-          <button id="btn-resume" class="pause-btn pause-btn--primary">▶ Hervatten</button>
-          <button id="btn-close"  class="pause-btn pause-btn--secondary">✕ Sluiten</button>
-        </div>
-      `;
+      root = document.createElement('div');
+      root.className = 'pause-overlay';
+      root.setAttribute('role', 'dialog');
+      root.setAttribute('aria-modal', 'true');
 
-      container.appendChild(el);
+      resumeBtn = document.createElement('button');
+      resumeBtn.type = 'button';
+      resumeBtn.className = 'pause-btn pause-btn--primary';
+      resumeBtn.textContent = '▶  Hervatten';
 
-      el.querySelector('#btn-resume').addEventListener('pointerdown', (e) => {
-        e.stopPropagation();
-        onResume();
-      });
+      closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'pause-btn pause-btn--secondary';
+      closeBtn.textContent = '✕  Sluiten';
 
-      el.querySelector('#btn-close').addEventListener('pointerdown', (e) => {
-        e.stopPropagation();
-        onClose();
-      });
+      const stop = (e) => e.stopPropagation();
+      resumeBtn.addEventListener('pointerdown', stop);
+      closeBtn.addEventListener('pointerdown', stop);
+      resumeBtn.addEventListener('click', () => onResume?.());
+      closeBtn.addEventListener('click', () => onClose?.());
+
+      root.appendChild(resumeBtn);
+      root.appendChild(closeBtn);
+      container.appendChild(root);
     },
 
     show() {
-      if (!el) return;
-      visible = true;
-      el.style.display = 'flex';
-      // Trigger reflow before opacity transition
-      void el.offsetHeight;
-      el.style.opacity = '1';
+      if (!root) return;
+      root.classList.add('pause-overlay--visible');
     },
 
     hide() {
-      if (!el) return;
-      visible = false;
-      el.style.opacity = '0';
-      setTimeout(() => {
-        if (el) el.style.display = 'none';
-      }, 200);
+      if (!root) return;
+      root.classList.remove('pause-overlay--visible');
     },
 
-    get isVisible() {
-      return visible;
+    isVisible() {
+      return !!root && root.classList.contains('pause-overlay--visible');
     },
 
     destroy() {
-      if (el?.parentNode) el.parentNode.removeChild(el);
-      el = null;
-      visible = false;
+      if (root && root.parentNode) root.parentNode.removeChild(root);
+      root = null;
+      resumeBtn = null;
+      closeBtn = null;
+      onResume = null;
+      onClose = null;
     },
   };
 }

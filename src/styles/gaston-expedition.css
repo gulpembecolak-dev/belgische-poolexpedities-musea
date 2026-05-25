@@ -1,0 +1,331 @@
+/* ============================================================
+   gaston-expedition.css — Gaston-specific components.
+   Base grid/nav styles come from hubert-expedition.css (hub__* classes).
+   ============================================================ */
+
+/* ================================================================
+   ROW 2 — POLAR MAP
+   ================================================================ */
+
+.hub__sl--gst-map {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.hub__gst-map {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 600px;
+  padding: 0 var(--space-6);
+}
+
+.hub__gst-map-svg {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
+.hub__gst-map-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  font-weight: var(--fw-medium);
+}
+
+/* Adrien route draw-in */
+.hub__gst-map-adrien {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: gst-draw-adrien 1.5s ease-out 0.5s forwards;
+}
+
+@keyframes gst-draw-adrien {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Gaston pulsing dot */
+.hub__gst-map-gaston {
+  opacity: 0;
+  animation: gst-gaston-appear 0.6s ease-out 2s forwards;
+}
+
+@keyframes gst-gaston-appear {
+  to { opacity: 1; }
+}
+
+.hub__gst-map-gaston-pulse {
+  animation: gst-pulse 2s ease-out 2.5s infinite;
+}
+
+@keyframes gst-pulse {
+  0%   { r: 6;  opacity: 0.7; }
+  100% { r: 22; opacity: 0; }
+}
+
+.hub__gst-map-quote {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.5vw, 32px);
+  color: var(--color-text-spotlight);
+  text-align: center;
+  margin: 0;
+  opacity: 0;
+  animation: gst-fade 0.8s ease-out 3s forwards;
+}
+
+@keyframes gst-fade {
+  to { opacity: 0.85; }
+}
+
+.hub__gst-map-annotation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-self: flex-end;
+  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  opacity: 0;
+  animation: gst-fade 0.8s ease-out 3.5s forwards;
+}
+
+/* ================================================================
+   ROW 3 — VADER & ZOON
+   ================================================================ */
+
+.hub__sl--gst-vz {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-5);
+  padding: 0 var(--space-6) !important;
+}
+
+.hub__gst-vz {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.hub__gst-vz-left,
+.hub__gst-vz-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hub__gst-vz-portrait {
+  width: clamp(200px, 22vw, 320px);
+  height: clamp(260px, 30vw, 420px);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+.hub__gst-vz-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.3) contrast(1.1) brightness(0.8);
+}
+
+.hub__gst-vz-meta {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+}
+
+.hub__gst-vz-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 clamp(16px, 3vw, 48px);
+}
+
+.hub__gst-vz-gap {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 96px);
+  font-style: italic;
+  color: var(--color-text-spotlight);
+  opacity: 0.85;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+}
+
+.hub__gst-vz-body {
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  color: var(--color-text-default);
+  line-height: var(--lh-normal);
+  text-align: center;
+  max-width: 640px;
+  margin: 0;
+  opacity: 0.75;
+}
+
+/* ================================================================
+   ROW 5 — DE TERUGKEER
+   ================================================================ */
+
+.hub__sl--gst-return {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.hub__gst-return {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+  max-width: 1200px;
+  padding: 0 var(--space-6);
+}
+
+.hub__gst-return-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.hub__gst-return-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-spotlight);
+  margin: 0;
+}
+
+.hub__gst-return-body {
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  color: var(--color-text-default);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+.hub__gst-return-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hub__gst-return-map-header {
+  font-family: var(--font-display);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.hub__gst-return-svg {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+/* PEA pulsing dot on return map */
+.hub__gst-map-pea {
+  opacity: 1;
+}
+
+.hub__gst-map-pea-pulse {
+  animation: gst-pulse 2s ease-out infinite;
+}
+
+/* PEA bridge button */
+.hub__gst-pea-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(204, 126, 51, 0.3);
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  color: var(--color-lantaarn);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 300ms ease, border-color 300ms ease;
+}
+
+.hub__gst-pea-btn:hover,
+.hub__gst-pea-btn:active {
+  background: rgba(204, 126, 51, 0.1);
+  border-color: rgba(204, 126, 51, 0.5);
+}
+
+/* ================================================================
+   ROW 6 — CLOSING LINE
+   ================================================================ */
+
+.hub__gst-closing {
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: var(--lh-normal);
+  white-space: pre-line;
+  margin: var(--space-4) 0 0;
+  opacity: 0.6;
+}
+
+/* ================================================================
+   SOMBER TREATMENT (Onder de sneeuw slide)
+   ================================================================ */
+
+.hub__sl--oversteek--somber {
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-primary) 0%,
+    rgba(10, 14, 20, 1) 100%
+  );
+}
+
+.hub__sl--oversteek--somber .hub__os-content {
+  opacity: 0.85;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 1000px) {
+  .hub__gst-vz {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: var(--space-3);
+  }
+
+  .hub__gst-vz-center {
+    padding: var(--space-2) 0;
+  }
+
+  .hub__gst-vz-gap {
+    font-size: 48px;
+  }
+
+  .hub__gst-vz-portrait {
+    width: 180px;
+    height: 240px;
+  }
+
+  .hub__gst-return {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}

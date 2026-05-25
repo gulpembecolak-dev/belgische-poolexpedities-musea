@@ -1,56 +1,50 @@
-// Ship loader — GLTFLoader wrapper with auto-normalization
-
-import { Box3, Vector3 } from 'three';
+/**
+ * ship-loader.js — GLTF schooner loader with normalization.
+ */
+import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const TARGET_SIZE = 8; // longest dimension in world units
+const TARGET_SIZE = 8;
 
-/**
- * Load a GLB ship model, normalize its scale and prepare for scene.
- * @param {string} path  URL to the .glb file
- * @returns {Promise<import('three').Group>}
- */
 export async function loadShip(path) {
   const loader = new GLTFLoader();
+  const gltf = await loader.loadAsync(path);
+  const root = gltf.scene;
 
-  const gltf = await new Promise((resolve, reject) => {
-    loader.load(path, resolve, undefined, reject);
-  });
+  const rawBox = new THREE.Box3().setFromObject(root);
+  const rawSize = rawBox.getSize(new THREE.Vector3());
+  const longest = Math.max(rawSize.x, rawSize.y, rawSize.z) || 1;
+  const scale = TARGET_SIZE / longest;
+  root.scale.setScalar(scale);
 
-  const ship = gltf.scene;
+  const box = new THREE.Box3().setFromObject(root);
+  const center = box.getCenter(new THREE.Vector3());
+  root.position.x -= center.x;
+  root.position.z -= center.z;
+  root.position.y -= box.min.y;
 
-  // Measure bounding box and log dimensions
-  const box = new Box3().setFromObject(ship);
-  const size = new Vector3();
-  box.getSize(size);
-  console.log(
-    `Ship dimensions (raw): ${size.x.toFixed(2)} × ${size.y.toFixed(2)} × ${size.z.toFixed(2)}`
-  );
+  root.rotation.y = Math.PI / 2;
 
-  // Normalize so the longest axis equals TARGET_SIZE
-  const maxDim = Math.max(size.x, size.y, size.z);
-  const scaleFactor = TARGET_SIZE / maxDim;
-  ship.scale.setScalar(scaleFactor);
-
-  // Re-center after scaling — sit the hull on y = 0
-  const scaledBox = new Box3().setFromObject(ship);
-  const center = new Vector3();
-  scaledBox.getCenter(center);
-  ship.position.set(-center.x, -scaledBox.min.y, -center.z);
-
-  // Rotate so port side faces +X (camera approaches from upper-right)
-  ship.rotation.y = Math.PI * 0.25;
-
-  // Shadows & env map
-  ship.traverse((child) => {
+  root.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
       child.receiveShadow = true;
-      if (child.material) {
-        child.material.envMapIntensity = 0.5;
+      const mat = child.material;
+      if (mat) {
+        mat.envMapIntensity = 0.5;
+        if ('emissive' in mat) mat.emissive = new THREE.Color(0x000000);
+        mat.transparent = false;
+        mat.opacity = 1;
+        mat.needsUpdate = true;
       }
     }
   });
 
-  return ship;
+  const debug = {
+    rawSize: { x: +rawSize.x.toFixed(3), y: +rawSize.y.toFixed(3), z: +rawSize.z.toFixed(3) },
+    scale:   +scale.toFixed(4),
+    finalPosition: { x: +root.position.x.toFixed(3), y: +root.position.y.toFixed(3), z: +root.position.z.toFixed(3) },
+  };
+
+  return { ship: root, debug };
 }

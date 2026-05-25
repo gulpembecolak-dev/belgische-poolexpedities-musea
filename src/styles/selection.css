@@ -1,0 +1,378 @@
+/* ============================================================
+   selection.css — rebuilt: portrait slots in white storm.
+   Dignified, haunting — real eyes through a blizzard.
+   ============================================================ */
+
+.selection {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-selection);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--color-sel-bg);
+  color: var(--color-sel-text);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1000ms var(--ease-atmospheric);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.selection::-webkit-scrollbar { display: none; }
+
+/* Scrollable inner wrapper */
+.selection__scroll {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.selection--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- Atmospheric shimmer (drifting light gradients) ---- */
+.selection__bg {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(70% 50% at 25% 30%, rgba(255, 254, 248, 0.7), transparent 70%),
+    radial-gradient(60% 45% at 75% 55%, rgba(216, 222, 232, 0.5), transparent 70%),
+    radial-gradient(55% 60% at 50% 85%, rgba(232, 228, 220, 0.6), transparent 70%);
+  filter: blur(40px);
+  animation: shimmer-drift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes shimmer-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-30px, 20px) scale(1.06); }
+}
+
+/* ---- Edge vignette (depth fog) ---- */
+.selection__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 90% at 50% 50%, transparent 40%, rgba(243, 242, 238, 0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---- Snowfall ---- */
+.selection__snow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.snowflake {
+  position: absolute;
+  top: -12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  filter: blur(0.5px);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  animation: snow-drift linear infinite;
+  --drift: 0px;
+}
+
+@keyframes snow-drift {
+  to { transform: translate(var(--drift), calc(100vh + 40px)); }
+}
+
+/* ---- Question (subtle, breathing) ---- */
+.selection__question {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  padding: clamp(60px, 8vh, 120px) var(--space-4) 0;
+  text-align: center;
+  font-family: var(--font-text);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-regular);
+  font-style: italic;
+  color: rgba(28, 32, 40, 0.45);
+  letter-spacing: var(--tracking-normal);
+  animation: question-breathe 5s ease-in-out infinite;
+}
+
+@keyframes question-breathe {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.75; }
+}
+
+/* ---- Captain row ---- */
+.selection__captains {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(48px, 8vw, 160px);
+  width: 100%;
+  min-height: 60vh;
+  padding: clamp(40px, 5vh, 80px) var(--safe-margin) var(--space-8);
+}
+
+/* ---- Each captain button ---- */
+.captain {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  font: inherit;
+  color: inherit;
+  min-width: var(--touch-comfortable);
+  min-height: var(--touch-min);
+  opacity: 0;
+  transition:
+    opacity 800ms var(--ease-atmospheric),
+    transform 1000ms var(--ease-atmospheric);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.captain:active {
+  transform: scale(0.96);
+}
+
+.captain:focus-visible {
+  outline: 2px solid var(--color-lantaarn);
+  outline-offset: 8px;
+  border-radius: 50%;
+}
+
+/* ---- Portrait circle ---- */
+.captain__portrait {
+  position: relative;
+  width: clamp(160px, 14vw, 260px);
+  height: clamp(160px, 14vw, 260px);
+}
+
+.captain__photo-slot {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(28, 32, 40, 0.12);
+  background: rgba(220, 218, 212, 0.4);
+  position: relative;
+  transition: border-color var(--duration-slow) var(--ease-atmospheric),
+              box-shadow var(--duration-slow) var(--ease-atmospheric);
+}
+
+.captain__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.6) contrast(1.1);
+  opacity: 0.85;
+  transition: filter var(--duration-slow) var(--ease-atmospheric),
+              opacity var(--duration-slow) var(--ease-atmospheric);
+}
+
+.captain__photo-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-sel-text);
+}
+
+.captain__photo-fallback svg {
+  width: 60%;
+  height: 60%;
+}
+
+/* Glow ring (hidden until hover/active) */
+.captain__glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  box-shadow: none;
+  transition: border-color var(--duration-slow) var(--ease-atmospheric),
+              box-shadow var(--duration-slow) var(--ease-atmospheric);
+  pointer-events: none;
+}
+
+/* ---- Hover / Active ---- */
+.captain:hover .captain__photo-slot,
+.captain:active .captain__photo-slot {
+  border-color: rgba(28, 32, 40, 0.3);
+  box-shadow: 0 0 40px rgba(204, 126, 51, 0.15);
+}
+
+.captain:hover .captain__photo,
+.captain:active .captain__photo {
+  filter: grayscale(0.1) contrast(1.05);
+  opacity: 1;
+}
+
+.captain:hover .captain__glow,
+.captain:active .captain__glow {
+  border-color: rgba(204, 126, 51, 0.3);
+  box-shadow: 0 0 30px rgba(204, 126, 51, 0.12);
+}
+
+/* ---- Meta block ---- */
+.captain__meta {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.captain__year {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-regular);
+  color: rgba(28, 32, 40, 0.38);
+  letter-spacing: var(--tracking-display);
+}
+
+.captain__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: rgba(28, 32, 40, 0.82);
+  line-height: var(--lh-snug);
+}
+
+.captain__motto {
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  color: rgba(28, 32, 40, 0.42);
+}
+
+/* ---- Selection states ---- */
+.captain--fade {
+  opacity: 0 !important;
+  pointer-events: none;
+  transform: scale(0.95);
+}
+
+.captain--chosen {
+  transform: translateY(-12px) scale(1.05);
+}
+
+.captain--chosen .captain__photo {
+  filter: grayscale(0) contrast(1);
+  opacity: 1;
+}
+
+.captain--chosen .captain__glow {
+  border-color: var(--color-lantaarn);
+  box-shadow: 0 0 50px var(--color-lantaarn-glow);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1200px) {
+  .selection__captains {
+    gap: var(--space-6);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+  .captain__portrait {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selection__bg,
+  .snowflake,
+  .selection__question {
+    animation: none !important;
+  }
+  .captain,
+  .captain__photo,
+  .captain__photo-slot,
+  .captain__glow {
+    transition-duration: 0ms !important;
+  }
+  .pea {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   PEA — Princess Elisabeth Antarctica section
+   ============================================================ */
+
+.pea {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--safe-margin) clamp(80px, 10vh, 140px);
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.4s var(--ease-atmospheric), transform 1.4s var(--ease-atmospheric);
+}
+
+.pea--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Divider ---- */
+.pea__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: clamp(280px, 50%, 600px);
+  margin-bottom: clamp(60px, 7vh, 100px);
+}
+
+.pea__divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(15, 23, 33, 0.15);
+}
+
+.pea__divider-caption {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(28, 32, 40, 0.45);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+/* ---- PEA portrait — 4th captain-style circle ---- */
+/* The .captain base has opacity:0 (captains animate in via GSAP).
+   PEA isn't in that GSAP loop — let the parent .pea--visible class drive its fade-in. */
+.pea--visible .captain--pea {
+  opacity: 1;
+}
+
+/* Photo tonal treatment: warm cream palette match (place, not face) */
+.captain--pea .captain__photo {
+  filter: saturate(0.5) sepia(0.15) contrast(0.95) brightness(1.02);
+  opacity: 1;
+}
+
+.captain--pea:hover .captain__photo,
+.captain--pea:active .captain__photo {
+  filter: saturate(0.65) sepia(0.1) contrast(1) brightness(1.06);
+  opacity: 1;
+}

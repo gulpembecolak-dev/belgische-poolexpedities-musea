@@ -1,49 +1,52 @@
-// Narrator — Howler wrapper with subtitle-segment sync
-
+/**
+ * narrator.js — Howler wrapper synced to a segment JSON.
+ */
 import { Howl } from 'howler';
 
-/**
- * Create a narrator controller.
- * @returns {object}  { load, play, pause, resume, stop, getCurrentTime,
- *                      getDuration, onTimeUpdate, onEnd, getSegmentAt,
- *                      segments, totalDuration, destroy }
- */
 export function createNarrator() {
   let howl = null;
   let segments = [];
-  let totalDuration = 55;
-  let timeUpdateCbs = [];
-  let endCbs = [];
-  let poll = null;
+  let totalDuration = 0;
+  let endHandler = null;
+  let timeHandler = null;
+  let pollId = 0;
 
-  const api = {
-    segments,
-    totalDuration,
+  const startPolling = () => {
+    stopPolling();
+    pollId = window.setInterval(() => {
+      if (!howl) return;
+      const t = howl.seek();
+      if (typeof t === 'number') timeHandler?.(t);
+    }, 50);
+  };
 
-    /**
-     * Preload audio file and narration-segment JSON.
-     * Resolves when both are ready.
-     */
+  const stopPolling = () => {
+    if (pollId) {
+      clearInterval(pollId);
+      pollId = 0;
+    }
+  };
+
+  return {
     async load(audioPath, dataPath) {
-      // Fetch subtitle / segment data
-      const res = await fetch(dataPath);
-      const data = await res.json();
+      const dataRes = await fetch(dataPath);
+      const data = await dataRes.json();
       segments = data.segments || [];
-      totalDuration = data.totalDuration || 55;
-      api.segments = segments;
-      api.totalDuration = totalDuration;
+      totalDuration = data.totalDuration || 0;
 
-      // Create & preload Howl
       await new Promise((resolve, reject) => {
         howl = new Howl({
           src: [audioPath],
-          preload: true,
           html5: false,
+          preload: true,
           onload: resolve,
-          onloaderror: (_id, err) => reject(new Error(`Audio load error: ${err}`)),
-          onend: () => endCbs.forEach((cb) => cb()),
+          onloaderror: (_id, err) => reject(new Error(`Audio load failed: ${err}`)),
+          onend: () => endHandler?.(),
         });
       });
+
+      if (!totalDuration) totalDuration = howl.duration();
+      return { totalDuration, audioDuration: howl.duration() };
     },
 
     play() {
@@ -60,7 +63,7 @@ export function createNarrator() {
 
     resume() {
       if (!howl) return;
-      howl.play(); // Howler resumes from paused position
+      howl.play();
       startPolling();
     },
 
@@ -71,30 +74,23 @@ export function createNarrator() {
     },
 
     getCurrentTime() {
-      return howl ? howl.seek() : 0;
+      if (!howl) return 0;
+      const t = howl.seek();
+      return typeof t === 'number' ? t : 0;
     },
 
     getDuration() {
       return totalDuration;
     },
 
-    onTimeUpdate(cb) {
-      timeUpdateCbs.push(cb);
-    },
+    onTimeUpdate(fn) { timeHandler = fn; },
+    onEnd(fn)        { endHandler = fn; },
 
-    onEnd(cb) {
-      endCbs.push(cb);
-    },
-
-    /**
-     * Return the narration segment active at `time`, or null.
-     */
-    getSegmentAt(time) {
-      return (
-        segments.find(
-          (s) => s.type === 'narration' && time >= s.start && time < s.end
-        ) || null
-      );
+    getSegmentAt(t) {
+      for (const s of segments) {
+        if (t >= s.start && t < s.end) return s;
+      }
+      return null;
     },
 
     destroy() {
@@ -103,26 +99,9 @@ export function createNarrator() {
         howl.unload();
         howl = null;
       }
-      timeUpdateCbs = [];
-      endCbs = [];
       segments = [];
+      endHandler = null;
+      timeHandler = null;
     },
   };
-
-  function startPolling() {
-    stopPolling();
-    poll = setInterval(() => {
-      const t = api.getCurrentTime();
-      timeUpdateCbs.forEach((cb) => cb(t));
-    }, 50);
-  }
-
-  function stopPolling() {
-    if (poll !== null) {
-      clearInterval(poll);
-      poll = null;
-    }
-  }
-
-  return api;
 }

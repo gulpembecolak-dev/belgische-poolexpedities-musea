@@ -1,0 +1,296 @@
+/* ============================================================
+   components.css — nav-back, filter-overlay, idle-warning,
+                    scene-curtain (router transition)
+   ============================================================ */
+
+/* ---- Scene curtain (router fade-to-black) ---- */
+.scene-curtain {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-primary);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 400;
+  transition: opacity 500ms var(--ease-atmospheric);
+}
+
+/* ---- Nav Back — minimal, matches overview-icon visual feel ---- */
+.nav-back {
+  position: fixed;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--color-text-spotlight);
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--duration-standard) var(--ease-atmospheric);
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+}
+
+.nav-back--visible {
+  opacity: 0.4;
+}
+
+.nav-back:hover,
+.nav-back:focus-visible {
+  opacity: 1;
+}
+
+.nav-back__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.nav-back__label {
+  white-space: nowrap;
+}
+
+/* ---- Filter Overlay ---- */
+.filter-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-filter);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-standard) var(--ease-atmospheric);
+}
+
+.filter-overlay--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.filter__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.filter__panel {
+  position: relative;
+  width: min(720px, 90vw);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-divider);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.filter__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.filter__input {
+  flex: 1;
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-divider);
+  border-radius: 4px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-default);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  outline: none;
+}
+
+.filter__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.filter__input:focus {
+  border-color: var(--color-lantaarn);
+}
+
+.filter__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--fs-h3);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filter__results {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.filter__result {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--touch-min);
+  border: none;
+  border-bottom: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-text-default);
+  font-family: var(--font-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-quick) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filter__result:last-child {
+  border-bottom: none;
+}
+
+.filter__result:active {
+  background: rgba(204, 126, 51, 0.1);
+}
+
+.filter__result-date {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-lantaarn);
+  letter-spacing: var(--tracking-wide);
+}
+
+.filter__result-title {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+}
+
+.filter__result-expedition {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+.filter__empty {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+}
+
+/* ---- Search trigger button (in expedition view) ---- */
+.search-trigger {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: 1px solid var(--color-divider);
+  border-radius: 4px;
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--color-text-default);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--duration-standard) var(--ease-atmospheric);
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+}
+
+.search-trigger--visible {
+  opacity: 1;
+}
+
+.search-trigger__icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---- Idle Warning ---- */
+.idle-warning {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-idle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  transition: opacity 600ms var(--ease-atmospheric);
+}
+
+.idle-warning--visible {
+  opacity: 1;
+}
+
+.idle-warning__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.idle-warning__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-lantaarn);
+  box-shadow: var(--glow-lantaarn);
+  animation: hint-pulse 1.4s ease-in-out infinite;
+}
+
+.idle-warning__text {
+  font-family: var(--font-ui);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: var(--color-text-default);
+  letter-spacing: var(--tracking-wide);
+}
+
+.idle-warning__sub {
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .scene-curtain,
+  .nav-back,
+  .filter-overlay,
+  .idle-warning {
+    transition-duration: 0ms !important;
+  }
+  .idle-warning__dot {
+    animation: none !important;
+  }
+}

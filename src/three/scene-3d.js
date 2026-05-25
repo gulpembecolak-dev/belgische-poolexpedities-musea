@@ -1,263 +1,256 @@
-// Three.js scene factory — sky, water, ship, ice, lighting, post-fx
-
+/**
+ * scene-3d.js — Three.js scene factory.
+ * Builds renderer, scene, camera, lights, sky, water, composer.
+ */
 import * as THREE from 'three';
-import { Sky }   from 'three/examples/jsm/objects/Sky.js';
+import gsap from 'gsap';
+import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import { Water } from 'three/examples/jsm/objects/Water.js';
+import { createPostFX } from './post-fx.js';
 
-import { loadShip }       from './ship-loader.js';
-import { createIceRocks } from './ice-rocks.js';
-import { createPostFX }   from './post-fx.js';
+/**
+ * Procedural water-normal texture (npm three doesn't ship waternormals.jpg).
+ */
+function makeWaterNormals(size = 512) {
+  const c = document.createElement('canvas');
+  c.width = size;
+  c.height = size;
+  const ctx = c.getContext('2d');
+  const img = ctx.createImageData(size, size);
+  const data = img.data;
 
-/* ──────────────────────────────────────────────────
-   Procedural water-normals texture (the npm
-   three package does not ship example textures)
-   ────────────────────────────────────────────────── */
-
-function generateWaterNormals(size = 512) {
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  const imageData = ctx.createImageData(size, size);
-  const d = imageData.data;
+  const eps = 0.01;
+  const height = (u, v) =>
+    Math.sin(u * 1.0) * Math.cos(v * 1.0) * 0.5 +
+    Math.sin(u * 2.7 + 1.3) * Math.cos(v * 2.3 - 0.7) * 0.3 +
+    Math.sin(u * 5.1 - 2.1) * Math.cos(v * 4.8 + 1.9) * 0.2;
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
+      const u = (x / size) * Math.PI * 2;
+      const v = (y / size) * Math.PI * 2;
+      const h  = height(u, v);
+      const hx = height(u + eps, v);
+      const hy = height(u, v + eps);
+      const nx = (h - hx) / eps;
+      const ny = (h - hy) / eps;
+      const nz = 1.0;
+      const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
       const i = (y * size + x) * 4;
-      // Multi-octave sine ripple normal map
-      const nx =
-        Math.sin(x * 0.05) * Math.cos(y * 0.08) * 0.25 +
-        Math.sin(x * 0.12 + y * 0.04) * 0.15;
-      const ny =
-        Math.cos(x * 0.07) * Math.sin(y * 0.06) * 0.25 +
-        Math.cos(x * 0.03 + y * 0.11) * 0.15;
-      // Encode normal [-1,1] → [0,255]
-      d[i]     = ((nx * 0.5 + 0.5) * 255) | 0; // R
-      d[i + 1] = ((ny * 0.5 + 0.5) * 255) | 0; // G
-      d[i + 2] = 200;                            // B (mostly +Z)
-      d[i + 3] = 255;                            // A
+      data[i]     = Math.floor(((nx / len) * 0.5 + 0.5) * 255);
+      data[i + 1] = Math.floor(((ny / len) * 0.5 + 0.5) * 255);
+      data[i + 2] = Math.floor(((nz / len) * 0.5 + 0.5) * 255);
+      data[i + 3] = 255;
     }
   }
-  ctx.putImageData(imageData, 0, 0);
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  return texture;
+  ctx.putImageData(img, 0, 0);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.colorSpace = THREE.NoColorSpace;
+  tex.needsUpdate = true;
+  return tex;
 }
 
-/* ──────────────────────────────────────────────────
-   Async factory
-   ────────────────────────────────────────────────── */
-
-/**
- * Create the full 3D scene. Resolves once all assets are loaded.
- * @param {HTMLElement} container
- */
 export async function createScene3D(container) {
-  /* ---- Renderer ---- */
+  // ---- Renderer ----
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: false,
     powerPreference: 'high-performance',
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.85;
+  renderer.toneMappingExposure = 0.30;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  /* ---- Scene ---- */
+  // ---- Scene ----
   const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0F1721, 0.013);
 
-  /* ---- Camera ---- */
+  // ---- Camera ----
   const camera = new THREE.PerspectiveCamera(
     50,
-    window.innerWidth / window.innerHeight,
+    container.clientWidth / container.clientHeight,
     0.1,
-    1000
+    1000,
   );
-  camera.position.set(18, 3.5, 38);
+  camera.position.set(15, 3.5, 32);
 
-  // Animatable lookAt target
-  const lookAtTarget = new THREE.Object3D();
-  lookAtTarget.position.set(0, 1.5, 0);
-  scene.add(lookAtTarget);
+  const lookTarget = new THREE.Object3D();
+  lookTarget.position.set(0, 1.5, 0);
+  scene.add(lookTarget);
 
-  /* ---- Fog ---- */
-  scene.fog = new THREE.FogExp2(0x0f1721, 0.011);
+  // ---- Lights ----
+  const sun = new THREE.DirectionalLight(0xffeacc, 0.7);
+  sun.position.set(12, 22, 6);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.near = 0.5;
+  sun.shadow.camera.far = 80;
+  sun.shadow.camera.left = -25;
+  sun.shadow.camera.right = 25;
+  sun.shadow.camera.top = 25;
+  sun.shadow.camera.bottom = -25;
+  scene.add(sun);
 
-  /* ---- Lighting ---- */
-  const dirLight = new THREE.DirectionalLight(0xffeacc, 0.95);
-  dirLight.position.set(12, 22, 6);
-  dirLight.castShadow = true;
-  dirLight.shadow.mapSize.set(1024, 1024);
-  dirLight.shadow.camera.near = 0.5;
-  dirLight.shadow.camera.far = 60;
-  dirLight.shadow.camera.left = -15;
-  dirLight.shadow.camera.right = 15;
-  dirLight.shadow.camera.top = 15;
-  dirLight.shadow.camera.bottom = -15;
-  scene.add(dirLight);
+  const hemi = new THREE.HemisphereLight(0xb1c8ff, 0x0a1828, 0.35);
+  scene.add(hemi);
 
-  scene.add(new THREE.HemisphereLight(0xb1c8ff, 0x0a1828, 0.45));
-  scene.add(new THREE.AmbientLight(0x6b7280, 0.15));
+  const ambient = new THREE.AmbientLight(0x6b7280, 0.20);
+  scene.add(ambient);
 
-  /* ---- Sky ---- */
+  // Front fill light — lifts ship from silhouette without breaking atmosphere
+  const fillLight = new THREE.DirectionalLight(0xffd9a8, 0.5);
+  fillLight.position.set(2, 5, 25);
+  fillLight.target.position.set(0, 2, 0);
+  fillLight.castShadow = false;
+  scene.add(fillLight);
+  scene.add(fillLight.target);
+
+  // ---- Sky ----
   const sky = new Sky();
   sky.scale.setScalar(10000);
   scene.add(sky);
 
-  const skyUni = sky.material.uniforms;
-  skyUni.turbidity.value       = 8;
-  skyUni.rayleigh.value        = 2.2;
-  skyUni.mieCoefficient.value  = 0.005;
-  skyUni.mieDirectionalG.value = 0.85;
+  const skyU = sky.material.uniforms;
+  skyU.turbidity.value = 4;
+  skyU.rayleigh.value = 0.5;
+  skyU.mieCoefficient.value = 0.005;
+  skyU.mieDirectionalG.value = 0.7;
 
-  const phi   = THREE.MathUtils.degToRad(90 - 7);  // elevation 7°
-  const theta = THREE.MathUtils.degToRad(205);      // azimuth 205°
-  const sunPos = new THREE.Vector3().setFromSphericalCoords(1, phi, theta);
-  skyUni.sunPosition.value.copy(sunPos);
+  const sunPos = new THREE.Vector3();
+  const elevation = 7;
+  const azimuth = 145;
+  const phi = THREE.MathUtils.degToRad(90 - elevation);
+  const theta = THREE.MathUtils.degToRad(azimuth);
+  sunPos.setFromSphericalCoords(1, phi, theta);
+  skyU.sunPosition.value.copy(sunPos);
 
-  /* ---- Water ---- */
-  const waterNormals = generateWaterNormals();
-
-  const water = new Water(
-    new THREE.PlaneGeometry(10000, 10000),
-    {
-      textureWidth: 512,
-      textureHeight: 512,
-      waterNormals,
-      sunDirection: dirLight.position.clone().normalize(),
-      sunColor:     0xffffff,
-      waterColor:   0x002438,
-      distortionScale: 2.8,
-      alpha: 1.0,
-    }
-  );
+  // ---- Water ----
+  const waterGeo = new THREE.PlaneGeometry(10000, 10000);
+  const water = new Water(waterGeo, {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: makeWaterNormals(512),
+    sunDirection: sun.position.clone().normalize(),
+    sunColor: 0xffffff,
+    waterColor: 0x002438,
+    distortionScale: 2.8,
+    fog: scene.fog !== undefined,
+    alpha: 1.0,
+  });
   water.rotation.x = -Math.PI / 2;
   water.position.y = -0.5;
   scene.add(water);
 
-  /* ---- Load ice texture ---- */
-  const texLoader = new THREE.TextureLoader();
+  // ---- Post-FX ----
+  const { composer, desaturationPass, bloomPass, vignettePass } =
+    createPostFX(renderer, scene, camera);
 
-  let iceTexture;
-  try {
-    iceTexture = await new Promise((res, rej) =>
-      texLoader.load('/textures/ice_surface.jpg', res, undefined, rej)
-    );
-  } catch {
-    // Fallback: a flat tinted texture so the scene still renders
-    const fallbackCanvas = document.createElement('canvas');
-    fallbackCanvas.width = 64;
-    fallbackCanvas.height = 64;
-    const fctx = fallbackCanvas.getContext('2d');
-    fctx.fillStyle = '#d8e4f0';
-    fctx.fillRect(0, 0, 64, 64);
-    iceTexture = new THREE.CanvasTexture(fallbackCanvas);
-    console.warn('ice_surface.jpg not found — using fallback colour');
-  }
-
-  /* ---- Ship ---- */
-  let ship;
-  try {
-    ship = await loadShip('/models/belgica/schooner.glb');
-  } catch {
-    // Fallback: visible wireframe box so layout is still testable
-    ship = new THREE.Mesh(
-      new THREE.BoxGeometry(6, 4, 2),
-      new THREE.MeshStandardMaterial({ color: 0x8b6914, wireframe: true })
-    );
-    ship.position.y = 2;
-    console.warn('schooner.glb not found — using placeholder');
-  }
-  scene.add(ship);
-
-  /* ---- Ice Rocks ---- */
-  const iceRocks = createIceRocks({ count: 7, iceTexture });
-  scene.add(iceRocks);
-
-  /* ---- Post-FX ---- */
-  const postFX = createPostFX(
-    renderer, scene, camera,
-    window.innerWidth, window.innerHeight
-  );
-
-  /* ---- Render loop ---- */
-  let running = false;
-  const clock = new THREE.Clock(false);
-  let slowFrames = 0;
-
-  function tick() {
-    if (!running) return;
-    requestAnimationFrame(tick);
-
-    const delta   = clock.getDelta();
-    const elapsed = clock.getElapsedTime();
-
-    // Performance monitor
-    if (delta > 0.018) {
-      slowFrames++;
-      if (slowFrames >= 60) {
-        console.warn(`Performance: ${slowFrames}+ consecutive slow frames`);
-        slowFrames = 0;
-      }
-    } else {
-      slowFrames = 0;
-    }
-
-    // Animate water
-    water.material.uniforms.time.value = elapsed;
-
-    // Camera tracks the lookAt target
-    camera.lookAt(lookAtTarget.position);
-
-    // Render through post-fx
-    postFX.composer.render();
-  }
-
-  /* ---- Resize ---- */
-  function onResize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+  // ---- Resize ----
+  const onResize = () => {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
-    postFX.onResize(w, h);
-  }
+    composer.setSize(w, h);
+    bloomPass.setSize(w, h);
+  };
   window.addEventListener('resize', onResize);
 
-  /* ---- Public API ---- */
+  // ---- Render loop ----
+  let rafId = 0;
+  let running = false;
+  let animatedShip = null;
+  let elapsed = 0;
+  const clock = new THREE.Clock();
+
+  const tick = () => {
+    rafId = requestAnimationFrame(tick);
+    const dt = clock.getDelta();
+    elapsed += dt;
+    water.material.uniforms['time'].value += dt;
+
+    // Ship organic bobbing — multi-frequency sea motion
+    if (animatedShip) {
+      if (animatedShip.userData.baseY === undefined) {
+        animatedShip.userData.baseY = animatedShip.position.y;
+        animatedShip.userData.baseRotX = animatedShip.rotation.x;
+        animatedShip.userData.baseRotZ = animatedShip.rotation.z;
+      }
+      const t = elapsed;
+      animatedShip.position.y = animatedShip.userData.baseY
+        + Math.sin(t * 0.55) * 0.18
+        + Math.sin(t * 1.7 + 0.5) * 0.06;
+      animatedShip.rotation.z = animatedShip.userData.baseRotZ + Math.sin(t * 0.42) * 0.028;
+      animatedShip.rotation.x = animatedShip.userData.baseRotX + Math.sin(t * 0.78 + 1.2) * 0.018;
+    }
+
+    camera.lookAt(lookTarget.position);
+    composer.render();
+  };
+
+  const registerAnimatedShip = (ship) => {
+    animatedShip = ship;
+  };
+
+  const startLoop = () => {
+    if (running) return;
+    running = true;
+    clock.start();
+    tick();
+  };
+
+  const stopLoop = () => {
+    running = false;
+    cancelAnimationFrame(rafId);
+  };
+
+  // ---- Helpers ----
+  const setDesaturation = (v) => { desaturationPass.uniforms.uDesaturation.value = v; };
+  const setVignette     = (v) => { vignettePass.uniforms.uVignette.value = v; };
+  const setBloom        = (v) => { bloomPass.strength = v; };
+
+  const animateCamera = (toPos, lookY, duration, ease = 'power1.inOut') => {
+    const tl = gsap.timeline();
+    tl.to(camera.position, { x: toPos.x, y: toPos.y, z: toPos.z, duration, ease }, 0);
+    if (lookY !== undefined) {
+      tl.to(lookTarget.position, { y: lookY, duration, ease }, 0);
+    }
+    return tl;
+  };
+
+  const destroy = () => {
+    stopLoop();
+    window.removeEventListener('resize', onResize);
+    renderer.dispose();
+    if (renderer.domElement.parentNode) {
+      renderer.domElement.parentNode.removeChild(renderer.domElement);
+    }
+  };
+
   return {
     scene,
     camera,
     renderer,
-    ship,
-    iceRocks,
-    water,
-    lookAtTarget,
-    postFX,
-
-    startLoop() {
-      running = true;
-      clock.start();
-      tick();
-    },
-
-    setDesaturation: postFX.setDesaturation,
-    setVignette:     postFX.setVignette,
-    setBloom:        postFX.setBloom,
-
-    onResize,
-
-    destroy() {
-      running = false;
-      window.removeEventListener('resize', onResize);
-      renderer.dispose();
-    },
+    composer,
+    lookTarget,
+    setDesaturation,
+    setVignette,
+    setBloom,
+    animateCamera,
+    registerAnimatedShip,
+    startLoop,
+    stopLoop,
+    destroy,
+    passes: { desaturationPass, bloomPass, vignettePass },
   };
 }

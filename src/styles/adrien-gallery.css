@@ -1,0 +1,265 @@
+/* ============================================================
+   adrien-gallery.css — Phantom.land–style 3D cylinder photo grid.
+   ============================================================ */
+
+.agal {
+  position: fixed;
+  inset: 0;
+  background: #08090c;
+  color: #e8e6e1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.agal:active {
+  cursor: grabbing;
+}
+
+/* ---- 3D Stage ---- */
+.agal__stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  perspective-origin: 50% 58%;
+}
+
+/* ---- Cylinder (3D transform container) ---- */
+.agal__cylinder {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ---- Card ---- */
+.agal__card {
+  position: absolute;
+  width: 180px;
+  height: 135px;
+  transform:
+    rotateY(var(--a))
+    translateZ(var(--r))
+    translateY(var(--y));
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  opacity: 0; /* animated in */
+}
+
+.agal__card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #111318;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition: border-color 400ms ease, box-shadow 400ms ease;
+}
+
+.agal__card:hover .agal__card-inner {
+  border-color: rgba(204, 126, 51, 0.25);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(204, 126, 51, 0.08),
+    0 0 0 1px rgba(204, 126, 51, 0.12);
+}
+
+.agal__card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.35) contrast(1.08) brightness(0.85);
+  transition: filter 600ms ease, transform 600ms ease;
+}
+
+.agal__card:hover .agal__card-img {
+  filter: saturate(0.6) contrast(1.1) brightness(0.95);
+  transform: scale(1.04);
+}
+
+/* Glossy shine overlay */
+.agal__card-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  pointer-events: none;
+}
+
+/* ---- Header overlay ---- */
+.agal__header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: clamp(24px, 3vh, 48px) clamp(32px, 4vw, 80px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 9, 12, 0.9) 0%,
+    rgba(8, 9, 12, 0.5) 60%,
+    transparent 100%
+  );
+}
+
+.agal__tags {
+  display: flex;
+  gap: 12px;
+}
+
+.agal__tag {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.12em;
+  color: rgba(232, 230, 225, 0.4);
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+}
+
+.agal__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: var(--fw-medium);
+  color: #fff;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.agal__sub {
+  font-family: var(--font-text);
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-style: italic;
+  color: rgba(232, 230, 225, 0.45);
+  margin: 0;
+}
+
+/* ---- Footer overlay ---- */
+.agal__footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: clamp(20px, 3vh, 40px) clamp(32px, 4vw, 80px);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(8, 9, 12, 0.9) 0%,
+    rgba(8, 9, 12, 0.5) 60%,
+    transparent 100%
+  );
+}
+
+.agal__count,
+.agal__credit {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  color: rgba(232, 230, 225, 0.35);
+}
+
+.agal__sep {
+  color: rgba(232, 230, 225, 0.15);
+}
+
+/* ---- Enter button ---- */
+.agal__enter-wrap {
+  position: fixed;
+  bottom: clamp(24px, 4vh, 48px);
+  right: clamp(32px, 4vw, 80px);
+  z-index: 12;
+}
+
+.agal__enter {
+  appearance: none;
+  background: rgba(204, 126, 51, 0.12);
+  border: 1px solid rgba(204, 126, 51, 0.35);
+  border-radius: 6px;
+  padding: 16px 32px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  color: var(--color-lantaarn);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  min-height: 56px;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 300ms ease,
+    border-color 300ms ease,
+    transform 300ms ease;
+  touch-action: manipulation;
+}
+
+.agal__enter:hover,
+.agal__enter:active {
+  background: rgba(204, 126, 51, 0.22);
+  border-color: rgba(204, 126, 51, 0.6);
+  transform: translateY(-1px);
+}
+
+.agal__enter-arrow {
+  display: inline-block;
+  margin-left: 8px;
+  transition: transform 300ms ease;
+}
+
+.agal__enter:hover .agal__enter-arrow {
+  transform: translateX(3px);
+}
+
+/* ---- Vignette ---- */
+.agal__vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 50%,
+      transparent 30%,
+      rgba(8, 9, 12, 0.45) 70%,
+      rgba(8, 9, 12, 0.85) 100%
+    );
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1000px) {
+  .agal__card {
+    width: 140px;
+    height: 105px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agal__card-img {
+    transition: none !important;
+  }
+  .agal__card-inner {
+    transition: none !important;
+  }
+}

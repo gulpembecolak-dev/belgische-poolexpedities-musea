@@ -1,0 +1,87 @@
+/* ============================================================
+   video-intro.css — full-screen hero video overlay
+   ============================================================ */
+
+.video-intro {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-selection);
+  background: #000;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-atmospheric);
+  overflow: hidden;
+}
+
+.video-intro--visible {
+  opacity: 1;
+}
+
+.video-intro__player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Skip button (bottom-right, minimal — matches nav-back visual feel) ---- */
+.video-intro__skip {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--color-text-spotlight);
+  font-family: var(--font-ui);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  opacity: 0;
+  animation: skip-fade-in 800ms var(--ease-atmospheric) 0.5s forwards,
+             skip-dim 1000ms var(--ease-atmospheric) 5s forwards;
+  transition: opacity 400ms ease;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+}
+
+.video-intro.is-touched .video-intro__skip {
+  opacity: 1 !important;
+  animation: skip-fade-in 400ms var(--ease-atmospheric) forwards !important;
+}
+
+.video-intro__skip:hover,
+.video-intro__skip:focus-visible {
+  opacity: 1 !important;
+}
+
+.video-intro__skip-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@keyframes skip-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes skip-dim {
+  to { opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-intro {
+    transition-duration: 0ms !important;
+  }
+  .video-intro__skip {
+    animation: none !important;
+    opacity: 1;
+  }
+}

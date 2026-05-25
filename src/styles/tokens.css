@@ -61,48 +61,101 @@
 }
 
 :root {
-  /* ---- Palette ---- */
-  --color-lantaarn:       #CC7E33;
+  /* ---- Palette (extended) ---- */
+  --color-bg-deepest:     #0F1721;
   --color-bg-primary:     #161D27;
+  --color-bg-elevated:    #1F2A37;
   --color-bg-overlay:     rgba(15, 23, 33, 0.92);
+  --color-bg-warm:        #1C1914;
+
+  --color-text-spotlight: #F4EFE6;
   --color-text-default:   #E8E6E1;
+  --color-text-secondary: #C5BDA8;
   --color-text-muted:     rgba(232, 230, 225, 0.55);
-  --color-text-spotlight: #FFFFFF;
-  --color-divider:        rgba(232, 230, 225, 0.18);
+  --color-text-dim:       #4A4439;
+
+  --color-lantaarn:        #CC7E33;
+  --color-lantaarn-bright: #E89344;
+  --color-lantaarn-glow:   rgba(204, 126, 51, 0.35);
+  --color-divider:         rgba(232, 230, 225, 0.18);
+  --color-divider-solid:   #4A4439;
+  --color-stroke-land:     rgba(232, 222, 204, 0.55);
+
+  /* ---- Selection scene (light palette) ---- */
+  --color-sel-bg:       #f3f2ee;
+  --color-sel-text:     #1c2028;
+  --color-sel-muted:    rgba(28, 32, 40, 0.50);
 
   /* ---- Typography ---- */
   --font-display: 'GT Sectra Fine', Georgia, serif;
   --font-text:    'GT Sectra Fine', Georgia, serif;
   --font-ui:      'Inter', system-ui, -apple-system, sans-serif;
 
-  --fs-caption: 0.75rem;
-  --fs-body:    1.125rem;
-  --fs-h3:      1.25rem;
-  --fs-h2:      1.5rem;
-  --fs-h1:      2rem;
+  --fs-hero:    clamp(48px, 4.5vw, 96px);
+  --fs-h1:      clamp(36px, 3.5vw, 72px);
+  --fs-h2:      clamp(28px, 2.5vw, 52px);
+  --fs-h3:      clamp(22px, 2vw, 38px);
+  --fs-body:    clamp(18px, 1.4vw, 28px);
+  --fs-caption: clamp(14px, 1.1vw, 20px);
+  --fs-data:    clamp(40px, 5vw, 96px);
 
+  --fw-light:   300;
   --fw-regular: 400;
   --fw-medium:  500;
   --fw-bold:    700;
 
-  --lh-snug:   1.45;
-  --lh-normal: 1.6;
+  --lh-tight:   1.1;
+  --lh-snug:    1.3;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.7;
 
-  --tracking-display: 0.22em;
-  --tracking-wide:    0.12em;
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.05em;
+  --tracking-display: 0.12em;
 
-  /* ---- Touch / Spacing ---- */
+  /* ---- Spacing (8px base) ---- */
+  --space-1:  8px;
+  --space-2:  16px;
+  --space-3:  24px;
+  --space-4:  32px;
+  --space-6:  48px;
+  --space-8:  64px;
+  --space-12: 96px;
+  --space-16: 128px;
+  --safe-margin: 120px;
+
+  /* ---- Touch targets ---- */
+  --touch-min:         88px;
   --touch-comfortable: 120px;
 
-  /* ---- Easing ---- */
-  --ease-atmospheric: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+  /* ---- Motion ---- */
+  --duration-instant:     100ms;
+  --duration-quick:       200ms;
+  --duration-standard:    400ms;
+  --duration-slow:        800ms;
+  --duration-atmospheric: 2000ms;
+  --duration-transition:  3000ms;
+
+  --ease-out:         cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:      cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-atmospheric: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Shadows / Glows ---- */
+  --glow-lantaarn:  0 0 40px var(--color-lantaarn-glow);
+  --shadow-overlay: 0 0 80px rgba(0, 0, 0, 0.6);
 
   /* ---- Z-index layers ---- */
   --z-canvas:        1;
-  --z-subtitle:      10;
+  --z-scene:         10;
+  --z-nav:           20;
+  --z-subtitle:      50;
+  --z-filter:        80;
   --z-caption:       11;
   --z-pause-hint:    15;
   --z-loader:        50;
   --z-pause-overlay: 100;
+  --z-selection:     300;
   --z-white-flash:   200;
+  --z-idle:          500;
 }
